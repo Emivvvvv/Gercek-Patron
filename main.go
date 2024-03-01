@@ -9,8 +9,6 @@ import (
 
 const bufferSize = 3
 
-const messageStrings = []string{}
-
 type serialPort struct {
 	port        serial.Port
 	readBuffer  []byte
@@ -83,16 +81,26 @@ func main() {
 
 	portHandler := initSerialPort(ports[index])
 
-	// Dummy data to send
-	portHandler.writeBuffer[0] = 0x04
-	portHandler.writeBuffer[1] = 0x02
-	portHandler.writeBuffer[2] = 0x00
-
-	for {
-		portHandler.sendSerialConnection()
+	for i := 0; i < 12; i++ {
 		portHandler.readFromSerialConnection()
-		time.Sleep(1 * time.Second)
+		messageEncoder(portHandler.readBuffer)
+		time.Sleep(250 * time.Millisecond)
 	}
+
+	portHandler.sendSerialConnection()
+	time.Sleep(250 * time.Millisecond)
+	portHandler.readFromSerialConnection()
+	fmt.Println(portHandler.readBuffer)
+
+	portHandler.sendSerialConnection()
+	time.Sleep(250 * time.Millisecond)
+	portHandler.readFromSerialConnection()
+	fmt.Println(portHandler.readBuffer)
+
+	portHandler.sendSerialConnection()
+	time.Sleep(250 * time.Millisecond)
+	portHandler.readFromSerialConnection()
+	fmt.Println(portHandler.readBuffer)
 
 	portHandler.closePort()
 }

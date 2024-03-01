@@ -2,73 +2,206 @@
 
 const int BUFFERSIZE = 3; // Buffer size for 2 bytes
 
-byte sendBuffer[bufferSize]; // Buffer for sending data to Raspberry Pi
-byte receiveBuffer[bufferSize]; // Buffer for receiving data from Raspberry Pi
+byte sendBuffer[BUFFERSIZE]; // Buffer for sending data to Raspberry Pi
+byte receiveBuffer[BUFFERSIZE]; // Buffer for receiving data from Raspberry Pi
+
+uint16_t valueUi16;
+float valueFloat32;
+bool valueStatus;
 
 void setup() {
   Serial.begin(9600);
 }
 
 void loop() {
-  // Prepare data to send (replace with your actual logic)
-  sendBuffer[0] = 0x03; // Example data byte 1
-  sendBuffer[1] = 0x01; // Example data byte 2
-
-  // Send data to Raspberry Pi
-  Serial.write(dataBuffer, bufferSize);
-
-  if (Serial.available() >= bufferSize) {
-      Serial.readBytes(receiveBuffer, bufferSize);
+  sendLocation();
+  delay(250);
+  sendInductionPWM();
+  delay(250);
+  sendTemp1();
+  delay(250);
+  sendTemp2();
+  delay(250);
+  sendTemp3();
+  delay(250);
+  sendCurrent();
+  delay(250);
+  sendVoltage();
+  delay(250);
+  sendGyroX();
+  delay(250);
+  sendGyroY();
+  delay(250);
+  sendGyroZ();
+  delay(250);
+  sendBrake();
+  delay(250);
+  sendLevitation();
+  delay(250);
+  if (readSerial()) {
+    messageEncoder(); // Runs the command that raspbery sent.
   }
+  delay(250);
+}
 
-  sendBuffer[0] = receiveBuffer[0]; // Example data byte 1
-  sendBuffer[1] = receiveBuffer[1]; // Example data byte 2
+void sendLocation() {
+  // dummy message for testing
+  sendBuffer[0] = 0x00;
+  sendBuffer[1] = 0x03;
+  sendBuffer[2] = 0x01;
+  sendSerial();
+}
 
-  delay(1000);
+void sendInductionPWM() {
+  // dummy message for testing
+  sendBuffer[0] = 0x01;
+  sendBuffer[1] = 0x03;
+  sendBuffer[2] = 0x01;
+  sendSerial();
+}
+
+void sendTemp1() {
+  // dummy message for testing
+  sendBuffer[0] = 0x02;
+  sendBuffer[1] = 0b00000011; // 3 decimal
+  sendBuffer[2] = 0b00000001; // 1 deccimal
+  sendSerial(); // should be 3.1
+}
+
+void sendTemp2() {
+  // dummy message for testing
+  sendBuffer[0] = 0x03;
+  sendBuffer[1] = 0b00000110; // 6 decimal
+  sendBuffer[2] = 0b00000010; // 2 deccimal
+  sendSerial(); // should be 6.2
+}
+
+void sendTemp3() {
+  // dummy message for testing
+  sendBuffer[0] = 0x04;
+  sendBuffer[1] = 0b00001001; // 9 decimal
+  sendBuffer[2] = 0b00000011; // 3 deccimal
+  sendSerial(); // should be 9.3
+}
+
+void sendCurrent() {
+  // dummy message for testing
+  sendBuffer[0] = 0x05;
+  sendBuffer[1] = 0b00000011; // 3 decimal
+  sendBuffer[2] = 0b00000001; // 1 deccimal
+  sendSerial(); // should be 3.1
+}
+
+void sendVoltage() {
+  // dummy message for testing
+  sendBuffer[0] = 0x06;
+  sendBuffer[1] = 0b00000110; // 6 decimal
+  sendBuffer[2] = 0b00000010; // 2 deccimal
+  sendSerial(); // should be 6.2
+}
+
+void sendGyroX() {
+  // dummy message for testing
+  sendBuffer[0] = 0x07;
+  sendBuffer[1] = 0b00000011; // 3 decimal
+  sendBuffer[2] = 0b00000001; // 1 deccimal
+  sendSerial(); // should be 3.1
+}
+
+void sendGyroY() {
+  // dummy message for testing
+  sendBuffer[0] = 0x08;
+  sendBuffer[1] = 0b00000110; // 6 decimal
+  sendBuffer[2] = 0b00000010; // 2 deccimal
+  sendSerial(); // should be 6.2
+}
+
+void sendGyroZ() {
+  // dummy message for testing
+  sendBuffer[0] = 0x09;
+  sendBuffer[1] = 0b00001001; // 9 decimal
+  sendBuffer[2] = 0b00000011; // 3 deccimal
+  sendSerial(); // should be 9.3
+}
+
+void sendBrake() {
+  // dummy message for testing
+  sendBuffer[0] = 0x0A;
+  sendBuffer[1] = 0x00;
+  sendBuffer[2] = 0x00; // currently not breaking!
+  sendSerial();
+}
+
+void sendLevitation() {
+  // dummy message for testing
+  sendBuffer[0] = 0x0B;
+  sendBuffer[1] = 0x00;
+  sendBuffer[2] = 0x01; // Levitating (feat. DaBaby) - Dua Lipa
+  sendSerial();
+}
+
+// sends the sendBuffer to Raspberry Pi
+void sendSerial() {
+  Serial.write(sendBuffer, BUFFERSIZE);
+}
+
+// returns true if the receiveBuffer is changed after call,
+// returns false if the receiveBuffer is not changed.
+bool readSerial() {
+  if (Serial.available() >= BUFFERSIZE) {
+      Serial.readBytes(receiveBuffer, BUFFERSIZE);
+  }
 }
 
 // message 		byte1(op)   byte2   byte3
 //
-// Gets the current value of the location sensor or
-// pwm of the induction motor. Byte2 and byte3
-// combined is the uint16 value.
-// location 	  0x00         uint16
-// induction  	  0x01         uint16
+// Sets the PWM of the induction motor.
+// Byte2 and byte3 combined is the uint16 value.
+// induction    0x01         uint16
 //
-// Gets the current value the sensors reads.
-// byte2 is before dot(.) and byte 3 is after dot(.)
-// integer part can have a value between 0-2^8
-// fractional part must be less than 100
-// temp1 	  	  0x02      uint8   uint8
-// temp2 	  	  0x03      uint8   uint8
-// temp3 	  	  0x04      uint8   uint8
-// current 	  	  0x05      uint8   uint8
-// voltage 	  	  0x06      uint8   uint8
-// gyro_x 	  	  0x07      uint8   uint8
-// gyro_y 	  	  0x08      uint8   uint8
-// gyro_z 	  	  0x09      uint8   uint8
-//
-// Gets the current status depending on the last bit.
-// if the last bit is 0 brake/levitation is off
-// if the last bit is 1 brake/levitation is on
-// brake 	  	  0x0A      0x00 	uint8
-// levitation 	  0x0B      0x00 	uint8
-void messageEncoder(const uint8_t messageBytes[], size_t messageLength) {
-  uint16_t valueUi16;
-  float valueFloat32;
-  bool valueStatus;
-
-  switch (messageBytes[0]) {
+// Sets the current status depending on the last bit.
+// if the last bit is 0 sets brake/levitation to off
+// if the last bit is 1 sets brake/levitation to on
+// brake 	  	  0x0A      0x00 	  uint8
+// levitation   0x0B      0x00 	  uint8
+bool messageEncoder() {
+  switch (receiveBuffer[0]) {
     case 0x01:
-      valueUi16 = (messageBytes[1] << 8) | messageBytes[2];
-      std::cout << "Induction motor PWM: " << valueUi16 << std::endl;
-                  break;
+      uint16_t newPWM = (receiveBuffer[1] << 8) | receiveBuffer[2];
+      setInductionMotorPWM(newPWM);
     case 0x0A:
     case 0x0B:
-      valueStatus = (messageBytes[2] & 0x01) == 1;
-      std::cout << (messageBytes[0] == 0x0A ? "Brake status: " : "Levitation status: ") << valueStatus << std::endl;
+      bool newStatus = (receiveBuffer[2] & 0x01) == 1;
+      receiveBuffer[0] == 0x0A ? setBrakes(newStatus) : setLevitation(newStatus);
       break;
     default:
-      std::cout << "Unknown message type: 0x" << std::hex << messageBytes[0] << std::endl;
+      return false;
   }
+
+  return true;
 }
+
+void setInductionMotorPWM(uint16_t newPWM) {
+  // dummy message for testing (Op code 0x0C)
+  sendBuffer[0] = 0x0C;
+  sendBuffer[1] = 0x00;
+  sendBuffer[2] = 0x00;
+  sendSerial();
+}
+
+void setBrakes(bool newBrakeStatus) {
+  // dummy message for testing (Op code 0x0D)
+  sendBuffer[0] = 0x0D;
+  sendBuffer[1] = 0x00;
+  sendBuffer[2] = 0x00;
+  sendSerial();
+}
+
+void setLevitation(bool newLevitationStatus) {
+  // dummy message for testing (Op code 0x0E)
+  sendBuffer[0] = 0x0E;
+  sendBuffer[1] = 0x00;
+  sendBuffer[2] = 0x00;
+  sendSerial();
+}
+
