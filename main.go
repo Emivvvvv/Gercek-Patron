@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go.bug.st/serial"
 	"log"
-	"time"
 )
 
 const bufferSize = 2
@@ -16,12 +15,10 @@ type serialPort struct {
 }
 
 func initSerialPort(portName string) *serialPort {
-	// Open the serial port (adjust the port name if needed)
 	port, err := serial.Open(portName, &serial.Mode{BaudRate: 9600})
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer port.Close()
 
 	readBuffer := make([]byte, bufferSize)  // Buffer for received data
 	writeBuffer := make([]byte, bufferSize) // Buffer for data will be sent
@@ -56,6 +53,10 @@ func (portHandler *serialPort) sendSerialConnection() {
 	}
 }
 
+func (portHandler *serialPort) closePort() {
+	portHandler.port.Close()
+}
+
 func main() {
 	ports, err := serial.GetPortsList()
 	if err != nil {
@@ -77,10 +78,8 @@ func main() {
 
 	portHandler := initSerialPort(ports[index])
 
-	for {
-		testConnection(portHandler)
-		time.Sleep(1 * time.Second)
-	}
+	testConnection(portHandler)
+	portHandler.closePort()
 }
 
 // Dummy func for testing the serial communication
