@@ -26,9 +26,9 @@ void testConnection() {
   // Send data to Raspberry Pi
   Serial.write(sendBuffer, BUFFERSIZE);
 
-  // Check if any data is available from Raspberry Pi
-  if (Serial.available() >= BUFFERSIZE) {
-    Serial.readBytes(receiveBuffer, BUFFERSIZE);
-    Serial.write(receiveBuffer, BUFFERSIZE);
-  }
+//  // Check if any data is available from Raspberry Pi
+//  if (Serial.available() >= BUFFERSIZE) {
+//    Serial.readBytes(receiveBuffer, BUFFERSIZE);
+//    Serial.write(receiveBuffer, BUFFERSIZE);
+//  }
 }

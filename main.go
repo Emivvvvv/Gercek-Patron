@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go.bug.st/serial"
 	"log"
+	"time"
 )
 
 const bufferSize = 2
@@ -31,7 +32,6 @@ func initSerialPort(portName string) *serialPort {
 }
 
 func (portHandler *serialPort) readFromSerialConnection() {
-	// Continuously read 2 bytes
 	n, err := portHandler.port.Read(portHandler.readBuffer)
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +78,10 @@ func main() {
 
 	portHandler := initSerialPort(ports[index])
 
-	testConnection(portHandler)
+	for {
+		testConnection(portHandler)
+		time.Sleep(1 * time.Second)
+	}
 	portHandler.closePort()
 }
 
@@ -89,9 +92,10 @@ func testConnection(portHandler *serialPort) {
 	portHandler.writeBuffer[0] = 0x03
 	portHandler.writeBuffer[1] = 0x01
 
-	portHandler.sendSerialConnection()
+	//portHandler.sendSerialConnection()
+	//fmt.Println("DATA SENT!")
 	portHandler.readFromSerialConnection()
 	fmt.Println("if this is -> ", portHandler.readBuffer, " <- equals to 0x06, 0x09 that means we read correctly! Yuppie!")
-	portHandler.readFromSerialConnection()
-	fmt.Println("if this is -> ", portHandler.readBuffer, " <- equals to 0x03, 0x01 that means we read correctly! Yuppie!")
+	//portHandler.readFromSerialConnection()
+	//fmt.Println("if this is -> ", portHandler.readBuffer, " <- equals to 0x03, 0x01 that means we read correctly! Yuppie!")
 }
