@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-const int BUFFERSIZE = 3; // Buffer size for 2 bytes
+const int BUFFERSIZE = 3; // Buffer array size. 3 bytes for each message.
 
 byte sendBuffer[BUFFERSIZE]; // Buffer for sending data to Raspberry Pi
 byte receiveBuffer[BUFFERSIZE]; // Buffer for receiving data from Raspberry Pi
@@ -9,8 +9,35 @@ uint16_t valueUi16;
 float valueFloat32;
 bool valueStatus;
 
+void sendLocation();
+void   sendInductionPWM();
+void   sendTemp1();
+void   gercekPatronIsi();
+void   sendTemp2();
+void   sendTemp3();
+void   gercekPatronIsi();
+void   sendCurrent();
+void   sendVoltage();
+void   gercekPatronIsi();
+void   sendGyroX();
+void   sendGyroY();
+void   gercekPatronIsi();
+void   sendGyroZ();
+void   sendBrake();
+void   gercekPatronIsi();
+void   sendLevitation();
+void   gercekPatronIsi();
+void sendSerial();
+bool readSerial();
+void setInductionMotorPWM(uint16_t);
+void setBrakes(bool);
+void setLevitation(bool);
+bool messageEncoder()
+
+
 void setup() {
   Serial.begin(9600);
+  delay(2000);
 }
 
 void loop() {
@@ -20,27 +47,35 @@ void loop() {
   delay(250);
   sendTemp1();
   delay(250);
+  gercekPatronIsi();
+  delay(250);
   sendTemp2();
   delay(250);
   sendTemp3();
+  delay(250);
+  gercekPatronIsi();
   delay(250);
   sendCurrent();
   delay(250);
   sendVoltage();
   delay(250);
+  gercekPatronIsi();
+  delay(250);
   sendGyroX();
   delay(250);
   sendGyroY();
+  delay(250);
+  gercekPatronIsi();
   delay(250);
   sendGyroZ();
   delay(250);
   sendBrake();
   delay(250);
+  gercekPatronIsi();
+  delay(250);
   sendLevitation();
   delay(250);
-  if (readSerial()) {
-    messageEncoder(); // Runs the command that raspbery sent.
-  }
+  gercekPatronIsi();
   delay(250);
 }
 
@@ -150,6 +185,14 @@ void sendSerial() {
 bool readSerial() {
   if (Serial.available() >= BUFFERSIZE) {
       Serial.readBytes(receiveBuffer, BUFFERSIZE);
+  }
+}
+
+// if there is something coming from raspberry, executes it
+// else nothing happens.
+void gercekPatronIsi() {
+  if (readSerial()) {
+    messageEncoder(); // Runs the command that raspbery sent.
   }
 }
 
