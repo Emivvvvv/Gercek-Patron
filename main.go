@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go.bug.st/serial"
 	"log"
-	"time"
 )
 
 const bufferSize = 2
@@ -54,7 +53,10 @@ func (portHandler *serialPort) sendSerialConnection() {
 }
 
 func (portHandler *serialPort) closePort() {
-	portHandler.port.Close()
+	err := portHandler.port.Close()
+	if err != nil {
+		return
+	}
 }
 
 func main() {
@@ -73,29 +75,19 @@ func main() {
 	var index int
 	fmt.Print("Type the index of serial connection port that you want to connect: ")
 	fmt.Scan(&index)
-
-	fmt.Println(ports[index])
+	fmt.Println("Selected port name: ", ports[index])
 
 	portHandler := initSerialPort(ports[index])
 
-	for {
-		testConnection(portHandler)
-		time.Sleep(1 * time.Second)
-	}
-	portHandler.closePort()
-}
-
-// Dummy func for testing the serial communication
-func testConnection(portHandler *serialPort) {
-
 	// Dummy data to send
-	portHandler.writeBuffer[0] = 0x03
-	portHandler.writeBuffer[1] = 0x01
+	portHandler.writeBuffer[0] = 0x06
+	portHandler.writeBuffer[1] = 0x09
 
-	//portHandler.sendSerialConnection()
-	//fmt.Println("DATA SENT!")
-	portHandler.readFromSerialConnection()
-	fmt.Println("if this is -> ", portHandler.readBuffer, " <- equals to 0x06, 0x09 that means we read correctly! Yuppie!")
-	//portHandler.readFromSerialConnection()
-	//fmt.Println("if this is -> ", portHandler.readBuffer, " <- equals to 0x03, 0x01 that means we read correctly! Yuppie!")
+	for {
+		portHandler.sendSerialConnection()
+		portHandler.readFromSerialConnection()
+		fmt.Println("if this is -> ", portHandler.readBuffer, " <- equals to 0x06, 0x09 that means we read correctly! Yuppie!")
+	}
+
+	portHandler.closePort()
 }

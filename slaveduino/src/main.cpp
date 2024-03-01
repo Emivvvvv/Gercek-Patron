@@ -1,34 +1,28 @@
 #include <Arduino.h>
 
-const int BUFFERSIZE = 2;
+const byte bufferSize = 2; // Buffer size for 2 bytes
 
-byte sendBuffer[BUFFERSIZE]; // Buffer for sending data to Raspberry Pi
-byte receiveBuffer[BUFFERSIZE]; // Buffer for receiving data from Raspberry Pi
-
-void testConnection();
+byte sendBuffer[bufferSize]; // Buffer for sending data to Raspberry Pi
+byte receiveBuffer[bufferSize]; // Buffer for receiving data from Raspberry Pi
 
 void setup() {
-  Serial.begin(9600); // Must match with Raspberry Pi
-
+  Serial.begin(9600);
 }
 
 void loop() {
-  void testConnection(); // Run test function.
-  delay(1000);
-}
-
-// Sends a test message and reads the response from the gercek patron.
-void testConnection() {
-  // Dummy message to send for testing
-  sendBuffer[0] = 0x06;
-  sendBuffer[1] = 0x09;
+  // Prepare data to send (replace with your actual logic)
+  sendBuffer[0] = 0x03; // Example data byte 1
+  sendBuffer[1] = 0x01; // Example data byte 2
 
   // Send data to Raspberry Pi
-  Serial.write(sendBuffer, BUFFERSIZE);
+  Serial.write(dataBuffer, bufferSize);
 
-//  // Check if any data is available from Raspberry Pi
-//  if (Serial.available() >= BUFFERSIZE) {
-//    Serial.readBytes(receiveBuffer, BUFFERSIZE);
-//    Serial.write(receiveBuffer, BUFFERSIZE);
-//  }
+  if (Serial.available() >= bufferSize) {
+      Serial.readBytes(receiveBuffer, bufferSize);
+  }
+
+  sendBuffer[0] = receiveBuffer[0]; // Example data byte 1
+  sendBuffer[1] = receiveBuffer[1]; // Example data byte 2
+
+  delay(1000);
 }
