@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go.bug.st/serial"
 	"log"
+	"time"
 )
 
 const bufferSize = 2
@@ -50,6 +51,7 @@ func (portHandler *serialPort) sendSerialConnection() {
 	if sentBytes != bufferSize {
 		fmt.Println("Incomplete data sent!")
 	}
+	fmt.Printf("Sent to Arduino: %02X %02X\n", portHandler.writeBuffer[0], portHandler.writeBuffer[1])
 }
 
 func (portHandler *serialPort) closePort() {
@@ -86,7 +88,7 @@ func main() {
 	for {
 		portHandler.sendSerialConnection()
 		portHandler.readFromSerialConnection()
-		fmt.Println("if this is -> ", portHandler.readBuffer, " <- equals to 0x06, 0x09 that means we read correctly! Yuppie!")
+		time.Sleep(1 * time.Second)
 	}
 
 	portHandler.closePort()
