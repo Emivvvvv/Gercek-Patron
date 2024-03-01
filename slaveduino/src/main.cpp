@@ -9,17 +9,19 @@ void testConnection();
 
 void setup() {
   Serial.begin(9600); // Must match with Raspberry Pi
-  void testConnection(); // Test function. will send
+
 }
 
 void loop() {
-  
+  void testConnection(); // Run test function.
+  delay(1000);
 }
 
+// Sends a test message and reads the response from the gercek patron.
 void testConnection() {
-  // Dummy message for testing
-  sendBuffer[0] = 0x03; 
-  sendBuffer[1] = 0x01; 
+  // Dummy message to send for testing
+  sendBuffer[0] = 0x06;
+  sendBuffer[1] = 0x09;
 
   // Send data to Raspberry Pi
   Serial.write(sendBuffer, BUFFERSIZE);
@@ -27,6 +29,6 @@ void testConnection() {
   // Check if any data is available from Raspberry Pi
   if (Serial.available() >= BUFFERSIZE) {
     Serial.readBytes(receiveBuffer, BUFFERSIZE);
-    Serial.write(sendBuffer, BUFFERSIZE);
+    Serial.write(receiveBuffer, BUFFERSIZE);
   }
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go.bug.st/serial"
 	"log"
+	"time"
 )
 
 const bufferSize = 2
@@ -74,9 +75,12 @@ func main() {
 
 	fmt.Println(ports[index])
 
-	portHandler := initSerialPort(ports[index]) //TODO: CHANGE PORT NAME!
+	portHandler := initSerialPort(ports[index])
 
-	testConnection(portHandler)
+	for {
+		testConnection(portHandler)
+		time.Sleep(1 * time.Second)
+	}
 }
 
 // Dummy func for testing the serial communication
