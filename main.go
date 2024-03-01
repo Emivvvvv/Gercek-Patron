@@ -72,6 +72,8 @@ func main() {
 	fmt.Print("Type the index of serial connection port that you want to connect: ")
 	fmt.Scan(&index)
 
+	fmt.Println(ports[index])
+
 	portHandler := initSerialPort(ports[index]) //TODO: CHANGE PORT NAME!
 
 	testConnection(portHandler)
