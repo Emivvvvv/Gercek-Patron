@@ -1,196 +1,165 @@
 #include <Arduino.h>
 
-const int BUFFERSIZE = 3; // Buffer array size. 3 bytes for each message.
+const int POSSIBLEMESSAGECOUNT = 12; // total message that could be sent
+const int SENDBUFFERSIZE = POSSIBLEMESSAGECOUNT * 3; // Buffer array size.
+const int RECEIVEBUFFERSIZE = 3; // Buffer array size.
 
-byte sendBuffer[BUFFERSIZE]; // Buffer for sending data to Raspberry Pi
-byte receiveBuffer[BUFFERSIZE]; // Buffer for receiving data from Raspberry Pi
+byte sendBuffer[SENDBUFFERSIZE]; // Buffer for sending data to Raspberry Pi
+byte receiveBuffer[RECEIVEBUFFERSIZE]; // Buffer for receiving data from Raspberry Pi
 
 uint16_t valueUi16;
 float valueFloat32;
 bool valueStatus;
 
-void sendLocation();
-void   sendInductionPWM();
-void   sendTemp1();
-void   gercekPatronIsi();
-void   sendTemp2();
-void   sendTemp3();
-void   gercekPatronIsi();
-void   sendCurrent();
-void   sendVoltage();
-void   gercekPatronIsi();
-void   sendGyroX();
-void   sendGyroY();
-void   gercekPatronIsi();
-void   sendGyroZ();
-void   sendBrake();
-void   gercekPatronIsi();
-void   sendLevitation();
-void   gercekPatronIsi();
+void getDataFromSensors();
+void getDataFromSensors2();
+void listenRaspberry();
 void sendSerial();
 bool readSerial();
 void setInductionMotorPWM(uint16_t);
 void setBrakes(bool);
 void setLevitation(bool);
-bool messageEncoder()
+bool messageEncoder();
 
 
 void setup() {
-  Serial.begin(9600);
-  delay(2000);
-}
-
-void loop() {
-  sendLocation();
-  delay(250);
-  sendInductionPWM();
-  delay(250);
-  sendTemp1();
-  delay(250);
-  gercekPatronIsi();
-  delay(250);
-  sendTemp2();
-  delay(250);
-  sendTemp3();
-  delay(250);
-  gercekPatronIsi();
-  delay(250);
-  sendCurrent();
-  delay(250);
-  sendVoltage();
-  delay(250);
-  gercekPatronIsi();
-  delay(250);
-  sendGyroX();
-  delay(250);
-  sendGyroY();
-  delay(250);
-  gercekPatronIsi();
-  delay(250);
-  sendGyroZ();
-  delay(250);
-  sendBrake();
-  delay(250);
-  gercekPatronIsi();
-  delay(250);
-  sendLevitation();
-  delay(250);
-  gercekPatronIsi();
-  delay(250);
-}
-
-void sendLocation() {
-  // dummy message for testing
-  sendBuffer[0] = 0x00;
-  sendBuffer[1] = 0x03;
-  sendBuffer[2] = 0x01;
+  Serial.begin(115200);
+  getDataFromSensors();
+  while (receiveBuffer[0] == 0xf) {readSerial();}
+  sendSerial();
+  delay(50);
+  getDataFromSensors2();
+  listenRaspberry();
+  sendSerial();
+  delay(50);
+  listenRaspberry();
+  sendSerial();
+  delay(50);
+  listenRaspberry();
   sendSerial();
 }
 
-void sendInductionPWM() {
-  // dummy message for testing
-  sendBuffer[0] = 0x01;
-  sendBuffer[1] = 0x03;
-  sendBuffer[2] = 0x01;
-  sendSerial();
+void loop() { 
 }
 
-void sendTemp1() {
-  // dummy message for testing
-  sendBuffer[0] = 0x02;
-  sendBuffer[1] = 0b00000011; // 3 decimal
-  sendBuffer[2] = 0b00000001; // 1 deccimal
-  sendSerial(); // should be 3.1
+void getDataFromSensors() {
+  sendBuffer[0 + 0x0 * 3] = 0x00;
+  sendBuffer[1 + 0x0 * 3] = 0x03;
+  sendBuffer[2 + 0x0 * 3] = 0x01;
+
+  sendBuffer[0 + 0x1 * 3] = 0x01;
+  sendBuffer[1 + 0x1 * 3] = 0x03;
+  sendBuffer[2 + 0x1 * 3] = 0x01;
+
+  sendBuffer[0 + 0x2 * 3] = 0x02;
+  sendBuffer[1 + 0x2 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 0x2 * 3] = 0b00000001; // 1 deccimal
+
+  sendBuffer[0 + 0x3 * 3] = 0x03;
+  sendBuffer[1 + 0x3 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 0x3 * 3] = 0b00000010; // 2 deccimal
+
+  sendBuffer[0 + 0x4 * 3] = 0x04;
+  sendBuffer[1 + 0x4 * 3] = 0b00001001; // 9 decimal
+  sendBuffer[2 + 0x4 * 3] = 0b00000011; // 3 deccimal
+
+  sendBuffer[0 + 0x5 * 3] = 0x05;
+  sendBuffer[1 + 0x5 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 0x5 * 3] = 0b00000001; // 1 deccimal
+
+  sendBuffer[0 + 0x6 * 3] = 0x06;
+  sendBuffer[1 + 0x6 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 0x6 * 3] = 0b00000010; // 2 deccimal
+
+  sendBuffer[0 + 0x7 * 3] = 0x07;
+  sendBuffer[1 + 0x7 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 0x7 * 3] = 0b00000001; // 1 deccimal
+
+  sendBuffer[0 + 0x8 * 3] = 0x08;
+  sendBuffer[1 + 0x8 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 0x8 * 3] = 0b00000010; // 2 deccimal
+
+  sendBuffer[0 + 0x9 * 3] = 0x09;
+  sendBuffer[1 + 0x9 * 3] = 0b00001001; // 9 decimal
+  sendBuffer[2 + 0x9 * 3] = 0b00000011; // 3 deccimal
+
+  sendBuffer[0 + 0xA * 3] = 0x0A;
+  sendBuffer[1 + 0xA * 3] = 0x00;
+  sendBuffer[2 + 0xA * 3] = 0x00; // currently not breaking!
+  
+  sendBuffer[0 + 0xB * 3] = 0x0B;
+  sendBuffer[1 + 0xB * 3] = 0x00;
+  sendBuffer[2 + 0xB * 3] = 0x01; // Levitating (feat. DaBaby) - Dua Lipa
 }
 
-void sendTemp2() {
-  // dummy message for testing
-  sendBuffer[0] = 0x03;
-  sendBuffer[1] = 0b00000110; // 6 decimal
-  sendBuffer[2] = 0b00000010; // 2 deccimal
-  sendSerial(); // should be 6.2
-}
+void getDataFromSensors2() {
+  sendBuffer[0 + 0x0 * 3] = 0x00;
+  sendBuffer[1 + 0x0 * 3] = 0x31;
+  sendBuffer[2 + 0x0 * 3] = 0x31;
 
-void sendTemp3() {
-  // dummy message for testing
-  sendBuffer[0] = 0x04;
-  sendBuffer[1] = 0b00001001; // 9 decimal
-  sendBuffer[2] = 0b00000011; // 3 deccimal
-  sendSerial(); // should be 9.3
-}
+  sendBuffer[0 + 0x1 * 3] = 0x01;
+  sendBuffer[1 + 0x1 * 3] = 0x03;
+  sendBuffer[2 + 0x1 * 3] = 0x01;
 
-void sendCurrent() {
-  // dummy message for testing
-  sendBuffer[0] = 0x05;
-  sendBuffer[1] = 0b00000011; // 3 decimal
-  sendBuffer[2] = 0b00000001; // 1 deccimal
-  sendSerial(); // should be 3.1
-}
+  sendBuffer[0 + 0x2 * 3] = 0x02;
+  sendBuffer[1 + 0x2 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 0x2 * 3] = 0b00000001; // 1 deccimal
 
-void sendVoltage() {
-  // dummy message for testing
-  sendBuffer[0] = 0x06;
-  sendBuffer[1] = 0b00000110; // 6 decimal
-  sendBuffer[2] = 0b00000010; // 2 deccimal
-  sendSerial(); // should be 6.2
-}
+  sendBuffer[0 + 0x3 * 3] = 0x03;
+  sendBuffer[1 + 0x3 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 0x3 * 3] = 0b00000010; // 2 deccimal
 
-void sendGyroX() {
-  // dummy message for testing
-  sendBuffer[0] = 0x07;
-  sendBuffer[1] = 0b00000011; // 3 decimal
-  sendBuffer[2] = 0b00000001; // 1 deccimal
-  sendSerial(); // should be 3.1
-}
+  sendBuffer[0 + 0x4 * 3] = 0x04;
+  sendBuffer[1 + 0x4 * 3] = 0b00001001; // 9 decimal
+  sendBuffer[2 + 0x4 * 3] = 0b00000011; // 3 deccimal
 
-void sendGyroY() {
-  // dummy message for testing
-  sendBuffer[0] = 0x08;
-  sendBuffer[1] = 0b00000110; // 6 decimal
-  sendBuffer[2] = 0b00000010; // 2 deccimal
-  sendSerial(); // should be 6.2
-}
+  sendBuffer[0 + 0x5 * 3] = 0x05;
+  sendBuffer[1 + 0x5 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 0x5 * 3] = 0b00000001; // 1 deccimal
 
-void sendGyroZ() {
-  // dummy message for testing
-  sendBuffer[0] = 0x09;
-  sendBuffer[1] = 0b00001001; // 9 decimal
-  sendBuffer[2] = 0b00000011; // 3 deccimal
-  sendSerial(); // should be 9.3
-}
+  sendBuffer[0 + 0x6 * 3] = 0x06;
+  sendBuffer[1 + 0x6 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 0x6 * 3] = 0b00000010; // 2 deccimal
 
-void sendBrake() {
-  // dummy message for testing
-  sendBuffer[0] = 0x0A;
-  sendBuffer[1] = 0x00;
-  sendBuffer[2] = 0x00; // currently not breaking!
-  sendSerial();
-}
+  sendBuffer[0 + 0x7 * 3] = 0x07;
+  sendBuffer[1 + 0x7 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 0x7 * 3] = 0b00000001; // 1 deccimal
 
-void sendLevitation() {
-  // dummy message for testing
-  sendBuffer[0] = 0x0B;
-  sendBuffer[1] = 0x00;
-  sendBuffer[2] = 0x01; // Levitating (feat. DaBaby) - Dua Lipa
-  sendSerial();
+  sendBuffer[0 + 0x8 * 3] = 0x08;
+  sendBuffer[1 + 0x8 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 0x8 * 3] = 0b00000010; // 2 deccimal
+
+  sendBuffer[0 + 0x9 * 3] = 0x09;
+  sendBuffer[1 + 0x9 * 3] = 0x31; // 9 decimal
+  sendBuffer[2 + 0x9 * 3] = 0b00000011; // 3 deccimal
+
+  sendBuffer[0 + 0xA * 3] = 0x0A;
+  sendBuffer[1 + 0xA * 3] = 0x00;
+  sendBuffer[2 + 0xA * 3] = 0x00; // currently not breaking!
+  
+  sendBuffer[0 + 0xB * 3] = 0x0B;
+  sendBuffer[1 + 0xB * 3] = 0x00;
+  sendBuffer[2 + 0xB * 3] = 0x01; // Levitating (feat. DaBaby) - Dua Lipa
 }
 
 // sends the sendBuffer to Raspberry Pi
 void sendSerial() {
-  Serial.write(sendBuffer, BUFFERSIZE);
+  Serial.write(sendBuffer, SENDBUFFERSIZE);
 }
 
 // returns true if the receiveBuffer is changed after call,
 // returns false if the receiveBuffer is not changed.
 bool readSerial() {
-  if (Serial.available() >= BUFFERSIZE) {
-      Serial.readBytes(receiveBuffer, BUFFERSIZE);
+  if (Serial.available() >= RECEIVEBUFFERSIZE) {
+      Serial.readBytes(receiveBuffer, RECEIVEBUFFERSIZE);
+      return true;
   }
+  return false;
 }
 
 // if there is something coming from raspberry, executes it
 // else nothing happens.
-void gercekPatronIsi() {
+void listenRaspberry() {
   if (readSerial()) {
     messageEncoder(); // Runs the command that raspbery sent.
   }
@@ -208,43 +177,35 @@ void gercekPatronIsi() {
 // brake 	  	  0x0A      0x00 	  uint8
 // levitation   0x0B      0x00 	  uint8
 bool messageEncoder() {
-  switch (receiveBuffer[0]) {
-    case 0x01:
-      uint16_t newPWM = (receiveBuffer[1] << 8) | receiveBuffer[2];
-      setInductionMotorPWM(newPWM);
-    case 0x0A:
-    case 0x0B:
-      bool newStatus = (receiveBuffer[2] & 0x01) == 1;
-      receiveBuffer[0] == 0x0A ? setBrakes(newStatus) : setLevitation(newStatus);
-      break;
-    default:
-      return false;
+  if (receiveBuffer[0] == 0x01) {
+    uint16_t newPWM = (receiveBuffer[1] << 8) | receiveBuffer[2];
+    setInductionMotorPWM(newPWM);
+  } else if (receiveBuffer[0] == 0x0A) {
+    setBrakes((receiveBuffer[2] & 0x01) == 1);
+  } else if (receiveBuffer[0] == 0x0B) {
+    setLevitation((receiveBuffer[2] & 0x01) == 1);
+  } else {
+    return false;
   }
 
   return true;
 }
 
 void setInductionMotorPWM(uint16_t newPWM) {
-  // dummy message for testing (Op code 0x0C)
-  sendBuffer[0] = 0x0C;
-  sendBuffer[1] = 0x00;
-  sendBuffer[2] = 0x00;
-  sendSerial();
+  sendBuffer[0 + 0x1 * 3] = 0x01;
+  sendBuffer[1 + 0x1 * 3] = 0x00;
+  sendBuffer[2 + 0x1 * 3] = 0x0C;
 }
 
 void setBrakes(bool newBrakeStatus) {
-  // dummy message for testing (Op code 0x0D)
-  sendBuffer[0] = 0x0D;
-  sendBuffer[1] = 0x00;
-  sendBuffer[2] = 0x00;
-  sendSerial();
+  sendBuffer[0 + 0xA * 3] = 0x0A;
+  sendBuffer[1 + 0xA * 3] = 0x00;
+  sendBuffer[2 + 0xA * 3] = 0x01; // BREAKING!
 }
 
 void setLevitation(bool newLevitationStatus) {
-  // dummy message for testing (Op code 0x0E)
-  sendBuffer[0] = 0x0E;
-  sendBuffer[1] = 0x00;
-  sendBuffer[2] = 0x00;
-  sendSerial();
+  sendBuffer[0 + 0xB * 3] = 0x0B;
+  sendBuffer[1 + 0xB * 3] = 0x00;
+  sendBuffer[2 + 0xB * 3] = 0x00; // stop levitation
 }
 

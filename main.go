@@ -16,7 +16,7 @@ type serialPort struct {
 }
 
 func initSerialPort(portName string) *serialPort {
-	port, err := serial.Open(portName, &serial.Mode{BaudRate: 9600})
+	port, err := serial.Open(portName, &serial.Mode{BaudRate: 115200})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func (portHandler *serialPort) sendSerialConnection() {
 	if sentBytes != bufferSize {
 		fmt.Println("Incomplete data sent!")
 	}
-	fmt.Printf("Sent to Arduino: %02X %02X\n", portHandler.writeBuffer[0], portHandler.writeBuffer[1])
+	fmt.Printf("Sent to Arduino: %02X %02X %02X\n", portHandler.writeBuffer[0], portHandler.writeBuffer[1], portHandler.writeBuffer[2])
 }
 
 func (portHandler *serialPort) closePort() {
@@ -81,26 +81,55 @@ func main() {
 
 	portHandler := initSerialPort(ports[index])
 
+	portHandler.port.ResetInputBuffer()
+	portHandler.writeBuffer[0] = 0xF
+	portHandler.writeBuffer[1] = 0xF
+	portHandler.writeBuffer[2] = 0xF
+	portHandler.sendSerialConnection()
+
+	time.Sleep(50 * time.Millisecond)
+
 	for i := 0; i < 12; i++ {
 		portHandler.readFromSerialConnection()
 		messageEncoder(portHandler.readBuffer)
-		time.Sleep(250 * time.Millisecond)
+		time.Sleep(2 * time.Millisecond)
 	}
 
+	time.Sleep(2 * time.Millisecond)
+	portHandler.writeBuffer[0] = 0x1
+	portHandler.writeBuffer[1] = 0x0
+	portHandler.writeBuffer[2] = 0x0
 	portHandler.sendSerialConnection()
-	time.Sleep(250 * time.Millisecond)
-	portHandler.readFromSerialConnection()
-	fmt.Println(portHandler.readBuffer)
 
-	portHandler.sendSerialConnection()
-	time.Sleep(250 * time.Millisecond)
-	portHandler.readFromSerialConnection()
-	fmt.Println(portHandler.readBuffer)
+	for i := 0; i < 12; i++ {
+		portHandler.readFromSerialConnection()
+		messageEncoder(portHandler.readBuffer)
+		time.Sleep(2 * time.Millisecond)
+	}
 
+	time.Sleep(2 * time.Millisecond)
+	portHandler.writeBuffer[0] = 0xA
+	portHandler.writeBuffer[1] = 0x0
+	portHandler.writeBuffer[2] = 0x1
 	portHandler.sendSerialConnection()
-	time.Sleep(250 * time.Millisecond)
-	portHandler.readFromSerialConnection()
-	fmt.Println(portHandler.readBuffer)
+
+	for i := 0; i < 12; i++ {
+		portHandler.readFromSerialConnection()
+		messageEncoder(portHandler.readBuffer)
+		time.Sleep(2 * time.Millisecond)
+	}
+
+	time.Sleep(2 * time.Millisecond)
+	portHandler.writeBuffer[0] = 0xB
+	portHandler.writeBuffer[1] = 0x0
+	portHandler.writeBuffer[2] = 0x0
+	portHandler.sendSerialConnection()
+
+	for i := 0; i < 12; i++ {
+		portHandler.readFromSerialConnection()
+		messageEncoder(portHandler.readBuffer)
+		time.Sleep(2 * time.Millisecond)
+	}
 
 	portHandler.closePort()
 }
@@ -140,7 +169,12 @@ func messageEncoder(messageBytes []byte) {
 	case 0x00, 0x01:
 		valueUi16 = (uint16(messageBytes[1]) << 8) + uint16(messageBytes[2])
 	case 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09:
-		valueFloat32 = float32(messageBytes[1]) + float32(messageBytes[2])/100
+		valueFloat32 = float32(messageBytes[1])
+		if messageBytes[2] < 0x9 {
+			valueFloat32 += float32(messageBytes[2]) / 10
+		} else {
+			valueFloat32 += float32(messageBytes[2]) / 100
+		}
 	case 0x0A, 0x0B:
 		valueStatus = messageBytes[2]&0x01 == 1
 	}
