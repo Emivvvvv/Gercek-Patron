@@ -54,11 +54,52 @@ func (portHandler *serialPort) sendSerialConnection() {
 	fmt.Printf("Sent to Arduino: %02X %02X %02X\n", portHandler.writeBuffer[0], portHandler.writeBuffer[1], portHandler.writeBuffer[2])
 }
 
+func (portHandler *serialPort) start() byte {
+	err := portHandler.port.ResetInputBuffer()
+	if err != nil {
+		log.Fatal("Couldn't start the connection.")
+	}
+	portHandler.writeBuffer[0] = 0xF
+	portHandler.writeBuffer[1] = 0xF
+	portHandler.writeBuffer[2] = 0xF
+	portHandler.sendSerialConnection()
+
+	portHandler.readFromSerialConnection()
+	return portHandler.readBuffer[0]
+}
+
 func (portHandler *serialPort) closePort() {
 	err := portHandler.port.Close()
 	if err != nil {
 		return
 	}
+}
+
+func (portHandler *serialPort) test(arduinoInfo byte) {
+	switch arduinoInfo {
+	case 0x0C:
+		portHandler.testSensor()
+	case 0x0D:
+		portHandler.testMovement()
+	}
+}
+
+func (portHandler *serialPort) testSensor() {
+	time.Sleep(50 * time.Millisecond)
+
+	portHandler.getSensorData()
+	portHandler.closePort()
+}
+
+func (portHandler *serialPort) testMovement() {
+	time.Sleep(50 * time.Millisecond)
+
+	portHandler.getMovementData()
+	portHandler.setLevitationStatus(false)
+	portHandler.setBrakeStatus(true)
+	portHandler.setInductionPWM(3131)
+	portHandler.getMovementData()
+	portHandler.closePort()
 }
 
 func main() {
@@ -69,69 +110,78 @@ func main() {
 	if len(ports) == 0 {
 		log.Fatal("No serial ports found!")
 	}
-	fmt.Println("Found ports:")
-	for index, port := range ports {
-		fmt.Printf("%d: %v\n", index, port)
+
+	for _, portName := range ports {
+		portHandler := initSerialPort(portName)
+		arduinoInfo := portHandler.start()
+		portHandler.test(arduinoInfo)
+		portHandler.closePort()
 	}
 
-	var index int
-	fmt.Print("Type the index of serial connection port that you want to connect: ")
-	fmt.Scan(&index)
-	fmt.Println("Selected port name: ", ports[index])
+	fmt.Println("All serial port tests completed.")
+}
 
-	portHandler := initSerialPort(ports[index])
-
-	portHandler.port.ResetInputBuffer()
-	portHandler.writeBuffer[0] = 0xF
-	portHandler.writeBuffer[1] = 0xF
-	portHandler.writeBuffer[2] = 0xF
-	portHandler.sendSerialConnection()
-
-	time.Sleep(50 * time.Millisecond)
-
-	for i := 0; i < 12; i++ {
-		portHandler.readFromSerialConnection()
-		messageEncoder(portHandler.readBuffer)
-		time.Sleep(2 * time.Millisecond)
-	}
-
-	time.Sleep(2 * time.Millisecond)
+// There will be an arduino struct. This will be connected to arduino struct not serialPort!
+func (portHandler *serialPort) setInductionPWM(newPWM uint16) {
 	portHandler.writeBuffer[0] = 0x1
-	portHandler.writeBuffer[1] = 0x0
-	portHandler.writeBuffer[2] = 0x0
+
+	var byte1 = uint8(newPWM >> 8)
+	var byte2 = uint8(newPWM & 0x00FF)
+
+	portHandler.writeBuffer[1] = byte1
+	portHandler.writeBuffer[2] = byte2
+
 	portHandler.sendSerialConnection()
+}
 
-	for i := 0; i < 12; i++ {
-		portHandler.readFromSerialConnection()
-		messageEncoder(portHandler.readBuffer)
-		time.Sleep(2 * time.Millisecond)
-	}
-
-	time.Sleep(2 * time.Millisecond)
+// There will be an arduino struct. This will be connected to arduino struct not serialPort!
+func (portHandler *serialPort) setBrakeStatus(newStatus bool) {
 	portHandler.writeBuffer[0] = 0xA
 	portHandler.writeBuffer[1] = 0x0
-	portHandler.writeBuffer[2] = 0x1
-	portHandler.sendSerialConnection()
 
-	for i := 0; i < 12; i++ {
-		portHandler.readFromSerialConnection()
-		messageEncoder(portHandler.readBuffer)
-		time.Sleep(2 * time.Millisecond)
+	switch newStatus {
+	case true:
+		portHandler.writeBuffer[2] = 0x1
+	case false:
+		portHandler.writeBuffer[2] = 0x0
 	}
 
-	time.Sleep(2 * time.Millisecond)
+	portHandler.sendSerialConnection()
+}
+
+// There will be an arduino struct. This will be connected to arduino struct not serialPort!
+func (portHandler *serialPort) setLevitationStatus(newStatus bool) {
 	portHandler.writeBuffer[0] = 0xB
 	portHandler.writeBuffer[1] = 0x0
-	portHandler.writeBuffer[2] = 0x0
-	portHandler.sendSerialConnection()
 
-	for i := 0; i < 12; i++ {
+	switch newStatus {
+	case true:
+		portHandler.writeBuffer[2] = 0x1
+	case false:
+		portHandler.writeBuffer[2] = 0x0
+	}
+
+	portHandler.writeBuffer[2] = 0x0
+
+	portHandler.sendSerialConnection()
+}
+
+// There will be a sensor arduino struct. This will be connected to sensor arduino struct not serialPort!
+func (portHandler *serialPort) getSensorData() {
+	for i := 0; i < 9; i++ {
 		portHandler.readFromSerialConnection()
 		messageEncoder(portHandler.readBuffer)
 		time.Sleep(2 * time.Millisecond)
 	}
+}
 
-	portHandler.closePort()
+// There will be a movement arduino struct. This will be connected to movement arduino struct not serialPort!
+func (portHandler *serialPort) getMovementData() {
+	for i := 0; i < 3; i++ {
+		portHandler.readFromSerialConnection()
+		messageEncoder(portHandler.readBuffer)
+		time.Sleep(2 * time.Millisecond)
+	}
 }
 
 // message 		byte1(op)   byte2   byte3
