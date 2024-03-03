@@ -28,7 +28,7 @@ func GetPortNames() []string {
 }
 
 func InitSerialPort(portName string) *Port {
-	port, err := serial.Open(portName, &serial.Mode{BaudRate: 115200})
+	port, err := serial.Open(portName, &serial.Mode{BaudRate: 57600})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,7 +65,7 @@ func (portHandler *Port) ReadSerialConnection() {
 }
 
 func (portHandler *Port) ReadSerialConnectionWithDelay() {
-	time.Sleep(3000 * time.Microsecond)
+	time.Sleep(30 * time.Millisecond)
 	portHandler.ReadSerialConnection()
 }
 func (portHandler *Port) SendSerialConnection() {

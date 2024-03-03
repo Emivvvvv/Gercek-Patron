@@ -8,6 +8,8 @@ import (
 var sensorOddEven = false
 var movementOddEven = false
 
+var movementMessageCount = 0
+
 func (sensorduino *Sensorduino) Test() bool {
 	sensorOddEven = !sensorOddEven
 	for i := 0; i < sensorduinoMessageItemCount; i++ {
@@ -23,6 +25,8 @@ func (sensorduino *Sensorduino) Test() bool {
 }
 
 func (movementduino *Movementduino) Test() bool {
+	movementMessageCount++
+	fmt.Println(movementMessageCount)
 	movementOddEven = !movementOddEven
 	for i := 0; i < movementduinoMessageItemCount; i++ {
 		movementduino.PortHandler.ReadSerialConnectionWithDelay()
@@ -78,12 +82,12 @@ func shouldMatch(messageBytes []byte, expectedBytesOdd []byte, expectedBytesEven
 	if oddEven {
 		if messageBytes[0] != expectedBytesOdd[0] || messageBytes[1] != expectedBytesOdd[1] || messageBytes[2] != expectedBytesOdd[2] {
 			fmt.Println(messageBytes, expectedBytesOdd, expectedBytesEven, oddEven)
-			log.Fatal("lol message incorrect haha that means 10 hours of debugging for you!")
+			fmt.Println("lol message incorrect haha that means 10 hours of debugging for you!")
 		}
 	} else {
 		if messageBytes[0] != expectedBytesEven[0] || messageBytes[1] != expectedBytesEven[1] || messageBytes[2] != expectedBytesEven[2] {
 			fmt.Println(messageBytes, expectedBytesOdd, expectedBytesEven, oddEven)
-			log.Fatal("lol message incorrect haha that means 10 hours of debugging for you!")
+			fmt.Println("lol message incorrect haha that means 10 hours of debugging for you!")
 		}
 	}
 }

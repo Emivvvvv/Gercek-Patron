@@ -52,11 +52,11 @@ func main() {
 			for {
 				// if !sensorDuino.GetSensorData() {
 				if !sensorDuino.Test() {
+					fmt.Println("SENSOR TEST SUCCESSFUL!")
 					break
 				}
 			}
 		}()
-		fmt.Println("SENSOR TEST SUCCESSFUL!")
 	}
 
 	if isMovementDuinoConnected {
@@ -66,11 +66,11 @@ func main() {
 			for {
 				//if !movementDuino.GetMovementData() {
 				if !movementDuino.Test() {
+					fmt.Println("MOVEMENT TEST SUCCESSFUL!")
 					break
 				}
 			}
 		}()
-		fmt.Println("MOVEMENT TEST SUCCESSFUL!")
 	}
 
 	wgOperations.Wait()

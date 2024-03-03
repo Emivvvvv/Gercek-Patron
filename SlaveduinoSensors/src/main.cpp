@@ -21,9 +21,10 @@ void sendOperationSuccessfull();
 void waitStartSignal();
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(57600);
   waitStartSignal();
   sendArduinoInfo();
+  delay(50);
   // run()
   testRun();
   sendOperationSuccessfull();
@@ -33,13 +34,13 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 300; i++) {
     getDataFromSensors();
     sendSerial();
-    delay(1);
+    delay(100);
     getDataFromSensors2();
     sendSerial();
-    delay(1);
+    delay(100);
   };
 }
 
