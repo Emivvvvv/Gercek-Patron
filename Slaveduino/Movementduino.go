@@ -12,7 +12,7 @@ type Movementduino struct {
 
 func (movementduino *Movementduino) GetMovementData() {
 	for i := 0; i < movementduinoMessageItemCount; i++ {
-		movementduino.PortHandler.ReadSerialConnection()
+		movementduino.PortHandler.ReadSerialConnectionWithDelay()
 		MessageEncoder(movementduino.PortHandler.GetReadBuffer())
 	}
 }

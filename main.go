@@ -5,6 +5,7 @@ import (
 	"gercek_patron/Serial"
 	"gercek_patron/Slaveduino"
 	"log"
+	"time"
 )
 
 func main() {
@@ -37,6 +38,11 @@ func main() {
 	}
 
 	if isMovementDuinoConnected {
+		movementDuino.GetMovementData()
+		movementDuino.SetLevitationStatus(false)
+		movementDuino.SetInductionPWM(3169)
+		movementDuino.SetBrakeStatus(true)
+		time.Sleep(1 * time.Second)
 		movementDuino.GetMovementData()
 	}
 

@@ -11,6 +11,7 @@ uint16_t valueUi16;
 float valueFloat32;
 bool valueStatus;
 
+void sendArduinoInfo();
 void getMovementData();
 void listenRaspberry();
 void sendSerial();
@@ -24,8 +25,7 @@ bool messageEncoder();
 void setup() {
   Serial.begin(115200);
   while (receiveBuffer[0] == 0xf) {readSerial();} // waits till raspberry sends start command
-  sendBuffer[0] = 0x0D;
-  sendSerial();
+  sendArduinoInfo();
   getMovementData();
   sendSerial();
   delay(100);
@@ -51,6 +51,12 @@ void getMovementData() {
   sendBuffer[1 + 2 * 3] = 0x00;
   sendBuffer[2 + 2 * 3] = 0x01; // Levitating (feat. DaBaby) - Dua Lipa
 }
+
+void sendArduinoInfo() {
+    byte sensorduinoInfoBuffer[3] = {0x0D, 0x0, 0x0};
+    Serial.write(sensorduinoInfoBuffer, 3);
+}
+
 
 // sends the sendBuffer to Raspberry Pi
 void sendSerial() {

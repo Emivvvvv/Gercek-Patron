@@ -12,7 +12,9 @@ float valueFloat32;
 bool valueStatus;
 
 void getDataFromSensors();
+void getDataFromSensors2();
 void sendSerial();
+void sendArduinoInfo();
 bool readSerial();
 void setInductionMotorPWM(uint16_t);
 void setBrakes(bool);
@@ -20,12 +22,14 @@ void setLevitation(bool);
 bool messageEncoder();
 
 
+
 void setup() {
   Serial.begin(115200);
   while (receiveBuffer[0] == 0xf) {readSerial();}
-  sendBuffer[0] = 0x0C;
-  sendSerial();
+  sendArduinoInfo();
   getDataFromSensors();
+  sendSerial();
+  getDataFromSensors2();
   sendSerial();
 }
 
@@ -106,6 +110,11 @@ void getDataFromSensors2() {
   sendBuffer[0 + 8 * 3] = 0x09;
   sendBuffer[1 + 8 * 3] = 0b00000011; // 3 decimal
   sendBuffer[2 + 8 * 3] = 0b00000001; // 1 decimal
+}
+
+void sendArduinoInfo() {
+    byte sensorduinoInfoBuffer[3] = {0x0C, 0x0, 0x0};
+    Serial.write(sensorduinoInfoBuffer, 3);
 }
 
 // sends the sendBuffer to Raspberry Pi
