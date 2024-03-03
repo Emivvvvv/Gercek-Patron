@@ -15,20 +15,21 @@ func main() {
 		isMovementDuinoConnected bool
 		sensorDuino              Slaveduino.Sensorduino
 		movementDuino            Slaveduino.Movementduino
-		wg                       sync.WaitGroup
+		wgArduino                sync.WaitGroup
+		wgOperations             sync.WaitGroup
 		resultChan               = make(chan interface{})
 	)
 
 	portNames := Serial.GetPortNames()
-	wg.Add(len(portNames))
+	wgArduino.Add(len(portNames))
 
 	for _, portName := range portNames {
-		go connectArduino(portName, resultChan, &wg)
+		go connectArduino(portName, resultChan, &wgArduino)
 	}
 
 	// Wait for all Goroutines to finish and collect results
 	go func() {
-		wg.Wait()
+		wgArduino.Wait()
 		close(resultChan)
 	}()
 
@@ -46,6 +47,7 @@ func main() {
 	}
 
 	if isSensorDuinoConnected {
+		wgOperations.Add(1)
 		go func() {
 			sensorDuino.GetSensorData()
 			sensorDuino.GetSensorData()
@@ -53,6 +55,7 @@ func main() {
 	}
 
 	if isMovementDuinoConnected {
+		wgOperations.Add(1)
 		go func() {
 			time.Sleep(20 * time.Millisecond)
 			movementDuino.GetMovementData()
@@ -64,7 +67,7 @@ func main() {
 		}()
 	}
 
-	fmt.Println("All serial port tests completed.")
+	wgOperations.Wait()
 }
 
 func connectArduino(portName string, resultChan chan<- interface{}, wg *sync.WaitGroup) {
