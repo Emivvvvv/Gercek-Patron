@@ -56,7 +56,7 @@ func (portHandler *Port) ReadSerialConnection() {
 }
 
 func (portHandler *Port) ReadSerialConnectionWithDelay() {
-	time.Sleep(10000 * time.Microsecond)
+	time.Sleep(3000 * time.Microsecond)
 	portHandler.ReadSerialConnection()
 }
 func (portHandler *Port) SendSerialConnection() {

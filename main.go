@@ -59,7 +59,6 @@ func main() {
 		wgOperations.Add(1)
 		go func() {
 			defer wgOperations.Done()
-			time.Sleep(20 * time.Millisecond)
 			movementDuino.GetMovementData()
 			movementDuino.SetLevitationStatus(false)
 			movementDuino.SetInductionPWM(3169)
