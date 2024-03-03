@@ -56,6 +56,7 @@ func main() {
 				}
 			}
 		}()
+		fmt.Println("SENSOR TEST SUCCESSFUL!")
 	}
 
 	if isMovementDuinoConnected {
@@ -69,9 +70,9 @@ func main() {
 				}
 			}
 		}()
+		fmt.Println("MOVEMENT TEST SUCCESSFUL!")
 	}
 
-	fmt.Println("TEST SUCCESSFUL!")
 	wgOperations.Wait()
 }
 
