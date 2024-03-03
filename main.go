@@ -38,6 +38,7 @@ func main() {
 	}
 
 	if isMovementDuinoConnected {
+		time.Sleep(20 * time.Millisecond)
 		movementDuino.GetMovementData()
 		movementDuino.SetLevitationStatus(false)
 		movementDuino.SetInductionPWM(3169)
