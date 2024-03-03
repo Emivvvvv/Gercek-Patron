@@ -39,35 +39,73 @@ void getDataFromSensors() {
 
   sendBuffer[0 + 1 * 3] = 0x02;
   sendBuffer[1 + 1 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 1 * 3] = 0b00000001; // 1 deccimal
+  sendBuffer[2 + 1 * 3] = 0b00000001; // 1 decimal
 
   sendBuffer[0 + 2 * 3] = 0x03;
   sendBuffer[1 + 2 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 2 * 3] = 0b00000010; // 2 deccimal
+  sendBuffer[2 + 2 * 3] = 0b00000010; // 2 decimal
 
   sendBuffer[0 + 3 * 3] = 0x04;
   sendBuffer[1 + 3 * 3] = 0b00001001; // 9 decimal
-  sendBuffer[2 + 3 * 3] = 0b00000011; // 3 deccimal
+  sendBuffer[2 + 3 * 3] = 0b00000011; // 3 decimal
 
   sendBuffer[0 + 4 * 3] = 0x05;
   sendBuffer[1 + 4 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 4 * 3] = 0b00000001; // 1 deccimal
+  sendBuffer[2 + 4 * 3] = 0b00000001; // 1 decimal
 
   sendBuffer[0 + 5 * 3] = 0x06;
   sendBuffer[1 + 5 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 5 * 3] = 0b00000010; // 2 deccimal
+  sendBuffer[2 + 5 * 3] = 0b00000010; // 2 decimal
 
   sendBuffer[0 + 6 * 3] = 0x07;
   sendBuffer[1 + 6 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 6 * 3] = 0b00000001; // 1 deccimal
+  sendBuffer[2 + 6 * 3] = 0b00000001; // 1 decimal
 
   sendBuffer[0 + 7 * 3] = 0x08;
   sendBuffer[1 + 7 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 7 * 3] = 0b00000010; // 2 deccimal
+  sendBuffer[2 + 7 * 3] = 0b00000010; // 2 decimal
 
   sendBuffer[0 + 8 * 3] = 0x09;
   sendBuffer[1 + 8 * 3] = 0b00001001; // 9 decimal
-  sendBuffer[2 + 8 * 3] = 0b00000011; // 3 deccimal
+  sendBuffer[2 + 8 * 3] = 0b00000011; // 3 decimal
+}
+
+void getDataFromSensors2() {
+  sendBuffer[0 + 0 * 3] = 0x00;
+  sendBuffer[1 + 0 * 3] = 0x06;
+  sendBuffer[2 + 0 * 3] = 0x02;
+
+  sendBuffer[0 + 1 * 3] = 0x02;
+  sendBuffer[1 + 1 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 1 * 3] = 0b00000001; // 1 decimal
+
+  sendBuffer[0 + 2 * 3] = 0x03;
+  sendBuffer[1 + 2 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 2 * 3] = 0b00000010; // 2 decimal
+
+  sendBuffer[0 + 3 * 3] = 0x04;
+  sendBuffer[1 + 3 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 3 * 3] = 0b00000001; // 1 decimal
+
+  sendBuffer[0 + 4 * 3] = 0x05;
+  sendBuffer[1 + 4 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 4 * 3] = 0b00000001; // 1 decimal
+
+  sendBuffer[0 + 5 * 3] = 0x06;
+  sendBuffer[1 + 5 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 5 * 3] = 0b00000010; // 2 decimal
+
+  sendBuffer[0 + 6 * 3] = 0x07;
+  sendBuffer[1 + 6 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 6 * 3] = 0b00000001; // 1 decimal
+
+  sendBuffer[0 + 7 * 3] = 0x08;
+  sendBuffer[1 + 7 * 3] = 0b00000110; // 6 decimal
+  sendBuffer[2 + 7 * 3] = 0b00000010; // 2 decimal
+
+  sendBuffer[0 + 8 * 3] = 0x09;
+  sendBuffer[1 + 8 * 3] = 0b00000011; // 3 decimal
+  sendBuffer[2 + 8 * 3] = 0b00000001; // 1 decimal
 }
 
 // sends the sendBuffer to Raspberry Pi
