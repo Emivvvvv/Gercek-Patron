@@ -8,8 +8,6 @@ import (
 var sensorOddEven = false
 var movementOddEven = false
 
-var movementMessageCount = 0
-
 func (sensorduino *Sensorduino) Test() bool {
 	sensorOddEven = !sensorOddEven
 	for i := 0; i < sensorduinoMessageItemCount; i++ {
@@ -25,14 +23,12 @@ func (sensorduino *Sensorduino) Test() bool {
 }
 
 func (movementduino *Movementduino) Test() bool {
-	movementMessageCount++
-	fmt.Println(movementMessageCount)
 	movementOddEven = !movementOddEven
 	for i := 0; i < movementduinoMessageItemCount; i++ {
 		movementduino.PortHandler.ReadSerialConnectionWithDelay()
 		// if the opcode is 0xE that means arduino successfully finished its job.
 		if movementduino.PortHandler.GetReadBuffer()[0] != 0xE {
-			movementTestEncoder(movementduino.PortHandler.GetReadBuffer())
+			movementduino.movementTestEncoder()
 		} else {
 			return false
 		}
@@ -65,14 +61,30 @@ func sensorTestEncoder(messageBytes []byte) {
 	}
 }
 
-func movementTestEncoder(messageBytes []byte) {
+func (movementduino *Movementduino) movementTestEncoder() {
+	messageBytes := movementduino.PortHandler.GetReadBuffer()
 	switch messageBytes[0] {
 	case 0x01:
 		shouldMatch(messageBytes, []byte{0x01, 0x03, 0x01}, []byte{0x01, 0x31, 0x31}, movementOddEven)
+		if movementOddEven {
+			movementduino.SetInductionPWM(12593)
+		} else {
+			movementduino.SetInductionPWM(769)
+		}
 	case 0x0A:
 		shouldMatch(messageBytes, []byte{0x0A, 0x00, 0x00}, []byte{0x0A, 0x00, 0x01}, movementOddEven)
+		if movementOddEven {
+			movementduino.SetBrakeStatus(true)
+		} else {
+			movementduino.SetBrakeStatus(false)
+		}
 	case 0x0B:
 		shouldMatch(messageBytes, []byte{0x0B, 0x00, 0x01}, []byte{0x0B, 0x00, 0x00}, movementOddEven)
+		if movementOddEven {
+			movementduino.SetLevitationStatus(false)
+		} else {
+			movementduino.SetLevitationStatus(true)
+		}
 	default:
 		log.Fatal("Get rekt movement arduino kaboom")
 	}

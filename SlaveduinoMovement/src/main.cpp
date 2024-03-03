@@ -30,7 +30,7 @@ void setup() {
   Serial.begin(57600);
   waitStartSignal();
   sendArduinoInfo();
-  delay(50);
+  delay(100);
   //run();
   testRun();
   sendOperationSuccessfull();
@@ -40,13 +40,21 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 300; i++) {
+  for (int i = 0; i < 600; i++) {
     getMovementData();
     sendSerial();
-    delay(100);
+    delay(10);
+    listenRaspberry();
+    listenRaspberry();
+    listenRaspberry();
+    delay(89);
     getMovementData2();
     sendSerial();
-    delay(100);
+    delay(10);
+    listenRaspberry();
+    listenRaspberry();
+    listenRaspberry();
+    delay(89);
   };
 }
 

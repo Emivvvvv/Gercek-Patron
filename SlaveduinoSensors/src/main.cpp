@@ -24,7 +24,7 @@ void setup() {
   Serial.begin(57600);
   waitStartSignal();
   sendArduinoInfo();
-  delay(50);
+  delay(100);
   // run()
   testRun();
   sendOperationSuccessfull();
@@ -34,7 +34,7 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 300; i++) {
+  for (int i = 0; i < 600; i++) {
     getDataFromSensors();
     sendSerial();
     delay(100);
