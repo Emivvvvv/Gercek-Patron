@@ -1,6 +1,7 @@
 package Slaveduino
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -38,7 +39,7 @@ func (movementduino *Movementduino) Test() bool {
 func sensorTestEncoder(messageBytes []byte) {
 	switch messageBytes[0] {
 	case 0x00:
-		shouldMatch(messageBytes, []byte{0x0B, 0x03, 0x01}, []byte{0x00, 0x06, 0x02}, sensorOddEven)
+		shouldMatch(messageBytes, []byte{0x00, 0x03, 0x01}, []byte{0x00, 0x06, 0x02}, sensorOddEven)
 	case 0x02:
 		shouldMatch(messageBytes, []byte{0x02, 0x03, 0x01}, []byte{0x02, 0x03, 0x01}, sensorOddEven)
 	case 0x03:
@@ -76,10 +77,12 @@ func movementTestEncoder(messageBytes []byte) {
 func shouldMatch(messageBytes []byte, expectedBytesOdd []byte, expectedBytesEven []byte, oddEven bool) {
 	if oddEven {
 		if messageBytes[0] != expectedBytesOdd[0] || messageBytes[1] != expectedBytesOdd[1] || messageBytes[2] != expectedBytesOdd[2] {
+			fmt.Println(messageBytes, expectedBytesOdd, expectedBytesEven, oddEven)
 			log.Fatal("lol message incorrect haha that means 10 hours of debugging for you!")
 		}
 	} else {
 		if messageBytes[0] != expectedBytesEven[0] || messageBytes[1] != expectedBytesEven[1] || messageBytes[2] != expectedBytesEven[2] {
+			fmt.Println(messageBytes, expectedBytesOdd, expectedBytesEven, oddEven)
 			log.Fatal("lol message incorrect haha that means 10 hours of debugging for you!")
 		}
 	}
