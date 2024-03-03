@@ -49,7 +49,7 @@ func (portHandler *Port) ReadSerialConnection() {
 		log.Fatal(err)
 	}
 	if n == bufferSize { // Check if 2 bytes were received
-		fmt.Printf("Received from Arduino: %02X %02X %02X\n", portHandler.readBuffer[0], portHandler.readBuffer[1], portHandler.readBuffer[2])
+		//fmt.Printf("Received from Arduino: %02X %02X %02X\n", portHandler.readBuffer[0], portHandler.readBuffer[1], portHandler.readBuffer[2])
 	} else {
 		fmt.Println("Incomplete data received!")
 	}
