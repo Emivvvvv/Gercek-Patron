@@ -5,47 +5,85 @@ import (
 	"gercek_patron/Serial"
 	"gercek_patron/Slaveduino"
 	"log"
+	"sync"
 	"time"
 )
 
 func main() {
-	var sensorDuino Slaveduino.Sensorduino
-	var movementDuino Slaveduino.Movementduino
-	var isSensorDuinoConnected = false
-	var isMovementDuinoConnected = false
+	var (
+		isSensorDuinoConnected   bool
+		isMovementDuinoConnected bool
+		sensorDuino              Slaveduino.Sensorduino
+		movementDuino            Slaveduino.Movementduino
+		wg                       sync.WaitGroup
+		resultChan               = make(chan interface{})
+	)
 
-	for _, portName := range Serial.GetPortNames() {
-		portHandler := Serial.InitSerialPort(portName)
-		portHandler.Start()
-		portHandler.ReadSerialConnectionWithDelay()
-		identifier := portHandler.GetReadBuffer()[0]
-		if identifier == 0xC {
-			sensorDuino = Slaveduino.Sensorduino{PortHandler: *portHandler}
+	portNames := Serial.GetPortNames()
+	wg.Add(len(portNames))
+
+	for _, portName := range portNames {
+		go connectArduino(portName, resultChan, &wg)
+	}
+
+	// Wait for all Goroutines to finish and collect results
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+
+	for result := range resultChan {
+		switch arduino := result.(type) {
+		case Slaveduino.Sensorduino:
+			sensorDuino = arduino
 			isSensorDuinoConnected = true
-			fmt.Println("Sensor Arduino at Port: ", portName, " successfully connected!")
-		} else if identifier == 0xD {
-			movementDuino = Slaveduino.Movementduino{PortHandler: *portHandler}
+			fmt.Println("Sensor Arduino at Port: ", sensorDuino.PortName, " successfully connected!")
+		case Slaveduino.Movementduino:
+			movementDuino = arduino
 			isMovementDuinoConnected = true
-			fmt.Println("Movement Arduino at Port: ", portName, " successfully connected!")
-		} else {
-			log.Fatal("Couldn't get the arduino type!")
+			fmt.Println("Movement Arduino at Port: ", movementDuino.PortName, " successfully connected!")
 		}
 	}
 
 	if isSensorDuinoConnected {
-		sensorDuino.GetSensorData()
-		sensorDuino.GetSensorData()
+		go func() {
+			sensorDuino.GetSensorData()
+			sensorDuino.GetSensorData()
+		}()
 	}
 
 	if isMovementDuinoConnected {
-		time.Sleep(20 * time.Millisecond)
-		movementDuino.GetMovementData()
-		movementDuino.SetLevitationStatus(false)
-		movementDuino.SetInductionPWM(3169)
-		movementDuino.SetBrakeStatus(true)
-		time.Sleep(1 * time.Second)
-		movementDuino.GetMovementData()
+		go func() {
+			time.Sleep(20 * time.Millisecond)
+			movementDuino.GetMovementData()
+			movementDuino.SetLevitationStatus(false)
+			movementDuino.SetInductionPWM(3169)
+			movementDuino.SetBrakeStatus(true)
+			time.Sleep(1 * time.Second)
+			movementDuino.GetMovementData()
+		}()
 	}
 
 	fmt.Println("All serial port tests completed.")
+}
+
+func connectArduino(portName string, resultChan chan<- interface{}, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	portHandler := Serial.InitSerialPort(portName)
+	portHandler.Start()
+	portHandler.ReadSerialConnectionWithDelay()
+	identifier := portHandler.GetReadBuffer()[0]
+
+	var arduino interface{}
+
+	if identifier == 0xC {
+		arduino = Slaveduino.Sensorduino{PortHandler: *portHandler, PortName: portName}
+	} else if identifier == 0xD {
+		arduino = Slaveduino.Movementduino{PortHandler: *portHandler, PortName: portName}
+	} else {
+		log.Fatal("Couldn't get the Arduino type!")
+	}
+
+	resultChan <- arduino
 }

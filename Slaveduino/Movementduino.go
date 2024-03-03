@@ -8,6 +8,7 @@ const movementduinoMessageItemCount = 3
 
 type Movementduino struct {
 	PortHandler Serial.Port
+	PortName    string
 }
 
 func (movementduino *Movementduino) GetMovementData() {

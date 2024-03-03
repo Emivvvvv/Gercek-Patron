@@ -8,6 +8,7 @@ const sensorduinoMessageItemCount = 9
 
 type Sensorduino struct {
 	PortHandler Serial.Port
+	PortName    string
 }
 
 func (sensorduino *Sensorduino) GetSensorData() {
