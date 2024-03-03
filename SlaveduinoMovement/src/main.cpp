@@ -40,15 +40,8 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 600; i++) {
+  for (int i = 0; i < 300; i++) {
     getMovementData();
-    sendSerial();
-    delay(10);
-    listenRaspberry();
-    listenRaspberry();
-    listenRaspberry();
-    delay(89);
-    getMovementData2();
     sendSerial();
     delay(10);
     listenRaspberry();
@@ -79,20 +72,6 @@ void getMovementData() {
   sendBuffer[0 + 2 * 3] = 0x0B;
   sendBuffer[1 + 2 * 3] = 0x00;
   sendBuffer[2 + 2 * 3] = 0x01; // Levitating (feat. DaBaby) - Dua Lipa
-}
-
-void getMovementData2() {
-  sendBuffer[0 + 0 * 3] = 0x01;
-  sendBuffer[1 + 0 * 3] = 0x31;
-  sendBuffer[2 + 0 * 3] = 0x31;
-
-  sendBuffer[0 + 1 * 3] = 0x0A;
-  sendBuffer[1 + 1 * 3] = 0x00;
-  sendBuffer[2 + 1 * 3] = 0x01; // currently breaking!
-
-  sendBuffer[0 + 2 * 3] = 0x0B;
-  sendBuffer[1 + 2 * 3] = 0x00;
-  sendBuffer[2 + 2 * 3] = 0x00; // NOT Levitating (feat. DaBaby) - Dua Lipa
 }
 
 void sendArduinoInfo() {
