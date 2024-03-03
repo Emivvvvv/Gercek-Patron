@@ -11,8 +11,10 @@ uint16_t valueUi16;
 float valueFloat32;
 bool valueStatus;
 
+void waitStartSignal();
 void sendArduinoInfo();
 void getMovementData();
+void getMovementData2();
 void listenRaspberry();
 void sendSerial();
 bool readSerial();
@@ -20,22 +22,38 @@ void setInductionMotorPWM(uint16_t);
 void setBrakes();
 void setLevitation();
 bool messageEncoder();
+void testRun();
+void sendOperationSuccessfull();
 
 
 void setup() {
   Serial.begin(115200);
-  while (receiveBuffer[0] == 0xf) {readSerial();} // waits till raspberry sends start command
+  waitStartSignal();
   sendArduinoInfo();
-  getMovementData();
-  sendSerial();
-  delay(100);
-  listenRaspberry();
-  listenRaspberry();
-  listenRaspberry();
-  sendSerial();
+  //run();
+  testRun();
+  sendOperationSuccessfull();
 }
 
 void loop() {
+}
+
+void testRun() {
+  for (int i = 0; i < 1000; i++) {
+    getMovementData();
+    sendSerial();
+    getMovementData2();
+    sendSerial();
+  };
+}
+
+void sendOperationSuccessfull() {
+    byte sensorduinoInfoBuffer[3] = {0x0E, 0x0, 0x0};
+    Serial.write(sensorduinoInfoBuffer, 3);
+}
+
+void waitStartSignal() {
+  while (receiveBuffer[0] == 0xf) readSerial();
 }
 
 void getMovementData() {
@@ -50,6 +68,20 @@ void getMovementData() {
   sendBuffer[0 + 2 * 3] = 0x0B;
   sendBuffer[1 + 2 * 3] = 0x00;
   sendBuffer[2 + 2 * 3] = 0x01; // Levitating (feat. DaBaby) - Dua Lipa
+}
+
+void getMovementData2() {
+  sendBuffer[0 + 0 * 3] = 0x01;
+  sendBuffer[1 + 0 * 3] = 0x31;
+  sendBuffer[2 + 0 * 3] = 0x31;
+
+  sendBuffer[0 + 1 * 3] = 0x0A;
+  sendBuffer[1 + 1 * 3] = 0x00;
+  sendBuffer[2 + 1 * 3] = 0x01; // currently breaking!
+
+  sendBuffer[0 + 2 * 3] = 0x0B;
+  sendBuffer[1 + 2 * 3] = 0x00;
+  sendBuffer[2 + 2 * 3] = 0x00; // NOT Levitating (feat. DaBaby) - Dua Lipa
 }
 
 void sendArduinoInfo() {

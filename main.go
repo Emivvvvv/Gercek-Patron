@@ -6,7 +6,6 @@ import (
 	"gercek_patron/Slaveduino"
 	"log"
 	"sync"
-	"time"
 )
 
 func main() {
@@ -50,8 +49,12 @@ func main() {
 		wgOperations.Add(1)
 		go func() {
 			defer wgOperations.Done()
-			sensorDuino.GetSensorData()
-			sensorDuino.GetSensorData()
+			for {
+				// if !sensorDuino.GetSensorData() {
+				if !sensorDuino.Test() {
+					break
+				}
+			}
 		}()
 	}
 
@@ -59,15 +62,16 @@ func main() {
 		wgOperations.Add(1)
 		go func() {
 			defer wgOperations.Done()
-			movementDuino.GetMovementData()
-			movementDuino.SetLevitationStatus(false)
-			movementDuino.SetInductionPWM(3169)
-			movementDuino.SetBrakeStatus(true)
-			time.Sleep(1 * time.Second)
-			movementDuino.GetMovementData()
+			for {
+				//if !movementDuino.GetMovementData() {
+				if !movementDuino.Test() {
+					break
+				}
+			}
 		}()
 	}
 
+	fmt.Println("TEST SUCCESSFUL!")
 	wgOperations.Wait()
 }
 

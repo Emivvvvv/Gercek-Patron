@@ -11,11 +11,17 @@ type Movementduino struct {
 	PortName    string
 }
 
-func (movementduino *Movementduino) GetMovementData() {
+func (movementduino *Movementduino) GetMovementData() bool {
 	for i := 0; i < movementduinoMessageItemCount; i++ {
 		movementduino.PortHandler.ReadSerialConnectionWithDelay()
-		MessageEncoder(movementduino.PortHandler.GetReadBuffer())
+		// if the opcode is 0xE that means arduino successfully finished its job.
+		if movementduino.PortHandler.GetReadBuffer()[0] != 0xE {
+			MessageEncoder(movementduino.PortHandler.GetReadBuffer())
+		} else {
+			return false
+		}
 	}
+	return true
 }
 
 func (movementduino *Movementduino) SetInductionPWM(newPWM uint16) {
