@@ -33,6 +33,15 @@ func InitSerialPort(portName string) *Port {
 		log.Fatal(err)
 	}
 
+	err = port.ResetOutputBuffer()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = port.ResetInputBuffer()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	readBuffer := make([]byte, bufferSize)  // Buffer for received data
 	writeBuffer := make([]byte, bufferSize) // Buffer for data will be sent
 

@@ -39,7 +39,7 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 30000; i++) {
+  for (int i = 0; i < 3; i++) {
     getMovementData();
     sendSerial();
     getMovementData2();

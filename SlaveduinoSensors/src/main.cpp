@@ -17,10 +17,6 @@ void getDataFromSensors2();
 void sendSerial();
 void sendArduinoInfo();
 bool readSerial();
-void setInductionMotorPWM(uint16_t);
-void setBrakes(bool);
-void setLevitation(bool);
-bool messageEncoder();
 void sendOperationSuccessfull();
 void waitStartSignal();
 
@@ -28,7 +24,7 @@ void setup() {
   Serial.begin(115200);
   waitStartSignal();
   sendArduinoInfo();
-  //run()
+  // run()
   testRun();
   sendOperationSuccessfull();
 }
@@ -37,13 +33,16 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 1000; i++) {
+  for (int i = 0; i < 10; i++) {
     getDataFromSensors();
     sendSerial();
+    delay(1);
     getDataFromSensors2();
     sendSerial();
+    delay(1);
   };
 }
+
 
 void getDataFromSensors() {
   sendBuffer[0 + 0 * 3] = 0x00;
