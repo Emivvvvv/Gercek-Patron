@@ -49,6 +49,7 @@ func main() {
 	if isSensorDuinoConnected {
 		wgOperations.Add(1)
 		go func() {
+			defer wgOperations.Done()
 			sensorDuino.GetSensorData()
 			sensorDuino.GetSensorData()
 		}()
@@ -57,6 +58,7 @@ func main() {
 	if isMovementDuinoConnected {
 		wgOperations.Add(1)
 		go func() {
+			defer wgOperations.Done()
 			time.Sleep(20 * time.Millisecond)
 			movementDuino.GetMovementData()
 			movementDuino.SetLevitationStatus(false)
