@@ -22,6 +22,7 @@ void setBrakes(bool);
 void setLevitation(bool);
 bool messageEncoder();
 void sendOperationSuccessfull();
+void waitStartSignal();
 
 void setup() {
   Serial.begin(115200);
