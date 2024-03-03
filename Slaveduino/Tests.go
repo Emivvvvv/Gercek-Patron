@@ -65,11 +65,11 @@ func (movementduino *Movementduino) movementTestEncoder() {
 	messageBytes := movementduino.PortHandler.GetReadBuffer()
 	switch messageBytes[0] {
 	case 0x01:
-		shouldMatch(messageBytes, []byte{0x01, 0x03, 0x01}, []byte{0x01, 0x31, 0x31}, movementOddEven)
+		shouldMatch(messageBytes, []byte{0x01, 0x00, 0x31}, []byte{0x01, 0x00, 0x62}, movementOddEven)
 		if movementOddEven {
-			movementduino.SetInductionPWM(12593)
+			movementduino.SetInductionPWM(98)
 		} else {
-			movementduino.SetInductionPWM(769)
+			movementduino.SetInductionPWM(49)
 		}
 	case 0x0A:
 		shouldMatch(messageBytes, []byte{0x0A, 0x00, 0x00}, []byte{0x0A, 0x00, 0x01}, movementOddEven)

@@ -62,8 +62,8 @@ void waitStartSignal() {
 
 void getMovementData() {
   sendBuffer[0 + 0 * 3] = 0x01;
-  sendBuffer[1 + 0 * 3] = 0x03;
-  sendBuffer[2 + 0 * 3] = 0x01;
+  sendBuffer[1 + 0 * 3] = 0x00;
+  sendBuffer[2 + 0 * 3] = 0x31;
 
   sendBuffer[0 + 1 * 3] = 0x0A;
   sendBuffer[1 + 1 * 3] = 0x00;
