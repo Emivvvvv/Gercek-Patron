@@ -50,7 +50,9 @@ func main() {
 		go func() {
 			defer wgOperations.Done()
 			for {
-				// if !sensorDuino.GetSensorData() {
+				//if !sensorDuino.GetSensorData() {
+				//	break
+				//}
 				if !sensorDuino.Test() {
 					fmt.Println("SENSOR TEST SUCCESSFUL!")
 					break
@@ -65,6 +67,8 @@ func main() {
 			defer wgOperations.Done()
 			for {
 				//if !movementDuino.GetMovementData() {
+				//	break
+				//}
 				if !movementDuino.Test() {
 					fmt.Println("MOVEMENT TEST SUCCESSFUL!")
 					break
