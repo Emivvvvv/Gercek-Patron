@@ -34,7 +34,7 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 600; i++) {
+  for (int i = 0; i < 300; i++) {
     getDataFromSensors();
     sendSerial();
     delay(100);

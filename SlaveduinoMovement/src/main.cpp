@@ -40,14 +40,16 @@ void loop() {
 }
 
 void testRun() {
-  for (int i = 0; i < 300; i++) {
-    getMovementData();
+  getMovementData();
+  for (int i = 0; i < 600; i++) {
     sendSerial();
-    delay(10);
+    delay(55);
     listenRaspberry();
+    delay(15);
     listenRaspberry();
+    delay(15);
     listenRaspberry();
-    delay(89);
+    delay(15);
   };
 }
 
