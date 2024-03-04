@@ -11,9 +11,15 @@ type Sensorduino struct {
 	PortName    string
 }
 
-func (sensorduino *Sensorduino) GetSensorData() {
+func (sensorduino *Sensorduino) GetSensorData() bool {
 	for i := 0; i < sensorduinoMessageItemCount; i++ {
 		sensorduino.PortHandler.ReadSerialConnectionWithDelay()
-		MessageEncoder(sensorduino.PortHandler.GetReadBuffer())
+		// if the opcode is 0xE that means arduino successfully finished its job.
+		if sensorduino.PortHandler.GetReadBuffer()[0] != 0xE {
+			MessageEncoder(sensorduino.PortHandler.GetReadBuffer())
+		} else {
+			return false
+		}
 	}
+	return true
 }

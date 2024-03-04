@@ -11,30 +11,39 @@ uint16_t valueUi16;
 float valueFloat32;
 bool valueStatus;
 
+void testRun();
 void getDataFromSensors();
 void getDataFromSensors2();
 void sendSerial();
 void sendArduinoInfo();
 bool readSerial();
-void setInductionMotorPWM(uint16_t);
-void setBrakes(bool);
-void setLevitation(bool);
-bool messageEncoder();
-
-
+void sendOperationSuccessfull();
+void waitStartSignal();
 
 void setup() {
-  Serial.begin(115200);
-  while (receiveBuffer[0] == 0xf) {readSerial();}
+  Serial.begin(57600);
+  waitStartSignal();
   sendArduinoInfo();
-  getDataFromSensors();
-  sendSerial();
-  getDataFromSensors2();
-  sendSerial();
+  delay(100);
+  // run()
+  testRun();
+  sendOperationSuccessfull();
 }
 
 void loop() {
 }
+
+void testRun() {
+  for (int i = 0; i < 300; i++) {
+    getDataFromSensors();
+    sendSerial();
+    delay(100);
+    getDataFromSensors2();
+    sendSerial();
+    delay(100);
+  };
+}
+
 
 void getDataFromSensors() {
   sendBuffer[0 + 0 * 3] = 0x00;
@@ -112,6 +121,10 @@ void getDataFromSensors2() {
   sendBuffer[2 + 8 * 3] = 0b00000001; // 1 decimal
 }
 
+void waitStartSignal() {
+  while (receiveBuffer[0] == 0xf) readSerial();
+}
+
 void sendArduinoInfo() {
     byte sensorduinoInfoBuffer[3] = {0x0C, 0x0, 0x0};
     Serial.write(sensorduinoInfoBuffer, 3);
@@ -132,3 +145,7 @@ bool readSerial() {
   return false;
 }
 
+void sendOperationSuccessfull() {
+    byte sensorduinoInfoBuffer[3] = {0x0E, 0x0, 0x0};
+    Serial.write(sensorduinoInfoBuffer, 3);
+}

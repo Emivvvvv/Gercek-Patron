@@ -11,8 +11,10 @@ uint16_t valueUi16;
 float valueFloat32;
 bool valueStatus;
 
+void waitStartSignal();
 void sendArduinoInfo();
 void getMovementData();
+void getMovementData2();
 void listenRaspberry();
 void sendSerial();
 bool readSerial();
@@ -20,28 +22,50 @@ void setInductionMotorPWM(uint16_t);
 void setBrakes();
 void setLevitation();
 bool messageEncoder();
+void testRun();
+void sendOperationSuccessfull();
 
 
 void setup() {
-  Serial.begin(115200);
-  while (receiveBuffer[0] == 0xf) {readSerial();} // waits till raspberry sends start command
+  Serial.begin(57600);
+  waitStartSignal();
   sendArduinoInfo();
-  getMovementData();
-  sendSerial();
   delay(100);
-  listenRaspberry();
-  listenRaspberry();
-  listenRaspberry();
-  sendSerial();
+  //run();
+  testRun();
+  sendOperationSuccessfull();
 }
 
 void loop() {
 }
 
+void testRun() {
+  getMovementData();
+  for (int i = 0; i < 600; i++) {
+    sendSerial();
+    delay(55);
+    listenRaspberry();
+    delay(15);
+    listenRaspberry();
+    delay(15);
+    listenRaspberry();
+    delay(15);
+  };
+}
+
+void sendOperationSuccessfull() {
+    byte sensorduinoInfoBuffer[3] = {0x0E, 0x0, 0x0};
+    Serial.write(sensorduinoInfoBuffer, 3);
+}
+
+void waitStartSignal() {
+  while (receiveBuffer[0] == 0xf) readSerial();
+}
+
 void getMovementData() {
   sendBuffer[0 + 0 * 3] = 0x01;
-  sendBuffer[1 + 0 * 3] = 0x03;
-  sendBuffer[2 + 0 * 3] = 0x01;
+  sendBuffer[1 + 0 * 3] = 0x00;
+  sendBuffer[2 + 0 * 3] = 0x31;
 
   sendBuffer[0 + 1 * 3] = 0x0A;
   sendBuffer[1 + 1 * 3] = 0x00;

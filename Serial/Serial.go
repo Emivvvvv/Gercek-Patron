@@ -28,7 +28,16 @@ func GetPortNames() []string {
 }
 
 func InitSerialPort(portName string) *Port {
-	port, err := serial.Open(portName, &serial.Mode{BaudRate: 115200})
+	port, err := serial.Open(portName, &serial.Mode{BaudRate: 57600})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = port.ResetOutputBuffer()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = port.ResetInputBuffer()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,14 +58,14 @@ func (portHandler *Port) ReadSerialConnection() {
 		log.Fatal(err)
 	}
 	if n == bufferSize { // Check if 2 bytes were received
-		fmt.Printf("Received from Arduino: %02X %02X %02X\n", portHandler.readBuffer[0], portHandler.readBuffer[1], portHandler.readBuffer[2])
+		//fmt.Printf("Received from Arduino: %02X %02X %02X\n", portHandler.readBuffer[0], portHandler.readBuffer[1], portHandler.readBuffer[2])
 	} else {
 		fmt.Println("Incomplete data received!")
 	}
 }
 
 func (portHandler *Port) ReadSerialConnectionWithDelay() {
-	time.Sleep(3000 * time.Microsecond)
+	time.Sleep(30 * time.Millisecond)
 	portHandler.ReadSerialConnection()
 }
 func (portHandler *Port) SendSerialConnection() {
