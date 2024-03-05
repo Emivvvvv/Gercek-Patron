@@ -21,14 +21,7 @@ void SlaveduinoMovement::sendArduinoInfo()
 }
 
 void SlaveduinoMovement::run() {
-    listenRaspberry();
-    delay(7);
-    listenRaspberry();
-    delay(7);
-    listenRaspberry();
-    delay(7);
-    sendSerial();
-    delay(29);
+    //NOT IMPLEMENTED YET
 }
 
 // sends the sendBuffer to Raspberry Pi
@@ -131,7 +124,7 @@ void SlaveduinoMovement::sendOperationSuccessful()
 void SlaveduinoMovement::testRun()
 {
     getTestData();
-    for (int i = 0; i < 600; i++)
+    for (int i = 0; i < 200; i++)
     {
         sendSerial();
         delay(55);

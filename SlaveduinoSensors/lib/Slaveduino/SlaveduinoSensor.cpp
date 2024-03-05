@@ -20,10 +20,9 @@ void SlaveduinoSensor::sendArduinoInfo()
     Serial.write(sensorduinoInfoBuffer, 3);
 }
 
-void SlaveduinoSensor::run() {
-    getTestData();
-    sendSerial();
-    delay(50);
+void SlaveduinoSensor::run()
+{
+    //NOT IMPLEMENTED YET!
 }
 
 // void setSensorData(uint16_t, float, float, float, float, float, float, float, float) {
@@ -48,96 +47,98 @@ void SlaveduinoSensor::sendOperationSuccessful()
 }
 
 // sends the sendBuffer to Raspberry Pi
-void SlaveduinoSensor::sendSerial() {
+void SlaveduinoSensor::sendSerial()
+{
     Serial.write(sendBuffer, SENDBUFFERSIZE);
 }
 
 void SlaveduinoSensor::testRun()
 {
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 100; i++)
+    {
         getTestData();
         sendSerial();
         delay(100);
         getTestData2();
         sendSerial();
         delay(100);
-      };
+    };
 }
 
 void SlaveduinoSensor::getTestData()
 {
-  sendBuffer[0 + 0 * 3] = 0x00;
-  sendBuffer[1 + 0 * 3] = 0x03;
-  sendBuffer[2 + 0 * 3] = 0x01;
+    sendBuffer[0 + 0 * 3] = 0x00;
+    sendBuffer[1 + 0 * 3] = 0x03;
+    sendBuffer[2 + 0 * 3] = 0x01;
 
-  sendBuffer[0 + 1 * 3] = 0x02;
-  sendBuffer[1 + 1 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 1 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 1 * 3] = 0x02;
+    sendBuffer[1 + 1 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 1 * 3] = 0b00000001; // 1 decimal
 
-  sendBuffer[0 + 2 * 3] = 0x03;
-  sendBuffer[1 + 2 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 2 * 3] = 0b00000010; // 2 decimal
+    sendBuffer[0 + 2 * 3] = 0x03;
+    sendBuffer[1 + 2 * 3] = 0b00000110; // 6 decimal
+    sendBuffer[2 + 2 * 3] = 0b00000010; // 2 decimal
 
-  sendBuffer[0 + 3 * 3] = 0x04;
-  sendBuffer[1 + 3 * 3] = 0b00001001; // 9 decimal
-  sendBuffer[2 + 3 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[0 + 3 * 3] = 0x04;
+    sendBuffer[1 + 3 * 3] = 0b00001001; // 9 decimal
+    sendBuffer[2 + 3 * 3] = 0b00000011; // 3 decimal
 
-  sendBuffer[0 + 4 * 3] = 0x05;
-  sendBuffer[1 + 4 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 4 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 4 * 3] = 0x05;
+    sendBuffer[1 + 4 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 4 * 3] = 0b00000001; // 1 decimal
 
-  sendBuffer[0 + 5 * 3] = 0x06;
-  sendBuffer[1 + 5 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 5 * 3] = 0b00000010; // 2 decimal
+    sendBuffer[0 + 5 * 3] = 0x06;
+    sendBuffer[1 + 5 * 3] = 0b00000110; // 6 decimal
+    sendBuffer[2 + 5 * 3] = 0b00000010; // 2 decimal
 
-  sendBuffer[0 + 6 * 3] = 0x07;
-  sendBuffer[1 + 6 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 6 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 6 * 3] = 0x07;
+    sendBuffer[1 + 6 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 6 * 3] = 0b00000001; // 1 decimal
 
-  sendBuffer[0 + 7 * 3] = 0x08;
-  sendBuffer[1 + 7 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 7 * 3] = 0b00000010; // 2 decimal
+    sendBuffer[0 + 7 * 3] = 0x08;
+    sendBuffer[1 + 7 * 3] = 0b00000110; // 6 decimal
+    sendBuffer[2 + 7 * 3] = 0b00000010; // 2 decimal
 
-  sendBuffer[0 + 8 * 3] = 0x09;
-  sendBuffer[1 + 8 * 3] = 0b00001001; // 9 decimal
-  sendBuffer[2 + 8 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[0 + 8 * 3] = 0x09;
+    sendBuffer[1 + 8 * 3] = 0b00001001; // 9 decimal
+    sendBuffer[2 + 8 * 3] = 0b00000011; // 3 decimal
 }
 
 void SlaveduinoSensor::getTestData2()
 {
-sendBuffer[0 + 0 * 3] = 0x00;
-  sendBuffer[1 + 0 * 3] = 0x06;
-  sendBuffer[2 + 0 * 3] = 0x02;
+    sendBuffer[0 + 0 * 3] = 0x00;
+    sendBuffer[1 + 0 * 3] = 0x06;
+    sendBuffer[2 + 0 * 3] = 0x02;
 
-  sendBuffer[0 + 1 * 3] = 0x02;
-  sendBuffer[1 + 1 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 1 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 1 * 3] = 0x02;
+    sendBuffer[1 + 1 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 1 * 3] = 0b00000001; // 1 decimal
 
-  sendBuffer[0 + 2 * 3] = 0x03;
-  sendBuffer[1 + 2 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 2 * 3] = 0b00000010; // 2 decimal
+    sendBuffer[0 + 2 * 3] = 0x03;
+    sendBuffer[1 + 2 * 3] = 0b00000110; // 6 decimal
+    sendBuffer[2 + 2 * 3] = 0b00000010; // 2 decimal
 
-  sendBuffer[0 + 3 * 3] = 0x04;
-  sendBuffer[1 + 3 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 3 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 3 * 3] = 0x04;
+    sendBuffer[1 + 3 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 3 * 3] = 0b00000001; // 1 decimal
 
-  sendBuffer[0 + 4 * 3] = 0x05;
-  sendBuffer[1 + 4 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 4 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 4 * 3] = 0x05;
+    sendBuffer[1 + 4 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 4 * 3] = 0b00000001; // 1 decimal
 
-  sendBuffer[0 + 5 * 3] = 0x06;
-  sendBuffer[1 + 5 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 5 * 3] = 0b00000010; // 2 decimal
+    sendBuffer[0 + 5 * 3] = 0x06;
+    sendBuffer[1 + 5 * 3] = 0b00000110; // 6 decimal
+    sendBuffer[2 + 5 * 3] = 0b00000010; // 2 decimal
 
-  sendBuffer[0 + 6 * 3] = 0x07;
-  sendBuffer[1 + 6 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 6 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 6 * 3] = 0x07;
+    sendBuffer[1 + 6 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 6 * 3] = 0b00000001; // 1 decimal
 
-  sendBuffer[0 + 7 * 3] = 0x08;
-  sendBuffer[1 + 7 * 3] = 0b00000110; // 6 decimal
-  sendBuffer[2 + 7 * 3] = 0b00000010; // 2 decimal
+    sendBuffer[0 + 7 * 3] = 0x08;
+    sendBuffer[1 + 7 * 3] = 0b00000110; // 6 decimal
+    sendBuffer[2 + 7 * 3] = 0b00000010; // 2 decimal
 
-  sendBuffer[0 + 8 * 3] = 0x09;
-  sendBuffer[1 + 8 * 3] = 0b00000011; // 3 decimal
-  sendBuffer[2 + 8 * 3] = 0b00000001; // 1 decimal
+    sendBuffer[0 + 8 * 3] = 0x09;
+    sendBuffer[1 + 8 * 3] = 0b00000011; // 3 decimal
+    sendBuffer[2 + 8 * 3] = 0b00000001; // 1 decimal
 }
